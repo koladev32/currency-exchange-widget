@@ -13,28 +13,17 @@ function App() {
         </p>
         <form className="w-full flex flex-col h-2/3 bg-stone-50 rounded p-2 md:w-9/12 md:self-center md:p-4 lg:w-5/12 lg:h-10/12">
           <div className="flex flex-row bg-white py-2 my-2 rounded">
-            <div className="relative w-3/6 hover:bg-stone-50">
+            <div className="relative w-3/6">
               <select
-                className="block appearance-none bg-white text-gray-700 py-3 px-4 pr-8 focus:outline-none focus:bg-white"
+                className="block appearance-none w-3/4 ml-2 hover:bg-stone-50 bg-white text-gray-700 py-3 px-4 pr-8 focus:outline-none focus:bg-white"
                 id="grid-state"
               >
-                <option>EUR</option>
-                <option>USD</option>
-                <option>GBP</option>
+                <option>
+                  🇪🇺 EUR
+                </option>
+                <option>🇺🇸 USD</option>
+                <option>🇬🇧 GBP</option>
               </select>
-              <div
-                className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-gray-400"
-              >
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-                  />
-                </svg>
-              </div>
             </div>
             <div className="w-4/6">
               <input
@@ -48,28 +37,17 @@ function App() {
           </div>
           <FontAwesomeIcon id="arrow-exchange" icon={faArrowCircleDown} size="lg" className="text-blue-600 self-center" />
           <div className="flex flex-row bg-white py-2 my-2 rounded">
-            <div className="relative w-3/6 hover:bg-stone-50">
+            <div className="relative w-3/6">
               <select
-                className="block appearance-none bg-white text-gray-700 py-3 px-4 pr-8 focus:outline-none focus:bg-white"
+                className="block appearance-none bg-white ml-2 w-full hover:bg-stone-50 text-gray-700 py-3 px-4 pr-8 focus:outline-none focus:bg-white"
                 id="grid-state"
               >
-                <option>EUR</option>
-                <option>USD</option>
-                <option>GBP</option>
+                <option>
+                  🇪🇺 EUR
+                </option>
+                <option>🇺🇸 USD</option>
+                <option>🇬🇧 GBP</option>
               </select>
-              <div
-                className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-gray-400"
-              >
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-                  />
-                </svg>
-              </div>
             </div>
             <div className="w-4/6">
               <input
