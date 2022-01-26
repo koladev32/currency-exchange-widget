@@ -1,6 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowCircleDown } from "@fortawesome/free-solid-svg-icons";
+import "./App.css";
 
 function App() {
   return (
@@ -45,7 +46,7 @@ function App() {
               />
             </div>
           </div>
-          <FontAwesomeIcon icon={faArrowCircleDown} size="lg" className="text-blue-600 absolute m-auto left-1/2" />
+          <FontAwesomeIcon id="arrow-exchange" icon={faArrowCircleDown} size="lg" className="text-blue-600 absolute left-1/2" />
           <div className="flex flex-row bg-white py-2 my-2 rounded">
             <div className="relative w-3/6 hover:bg-stone-50">
               <select
@@ -81,7 +82,7 @@ function App() {
             </div>
           </div>
           <div className="flex flex-row bg-white py-2 mt-10 rounded">
-            <div className="flex flex-row justify-between w-full p-4">
+            <div className="flex flex-row justify-between w-full p-4 font-semibold">
               <p className="text-xs">
                 £1 = €1.1946
               </p>
@@ -91,7 +92,7 @@ function App() {
             </div>
           </div>
           <div className="flex flex-row py-2 mt-6 rounded justify-center">
-            <button type="submit" className="bg-blue-600 rounded-lg py-3 text-white px-20 font-semibold shadow-md shadow-current shadow-blue-500/50">
+            <button type="submit" className="bg-blue-600 rounded-lg py-3 text-white px-20 font-semibold shadow-md shadow-blue-500/50">
               Exchange money
             </button>
           </div>
