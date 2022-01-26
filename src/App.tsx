@@ -1,24 +1,102 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowCircleDown } from "@fortawesome/free-solid-svg-icons";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+    <div className="w-screen h-screen flex justify-center items-center">
+      <div className="w-5/6 h-4/6 p-2">
+        <h2 className="text-2xl font-semibold text-center">Currency exchange</h2>
+        <p className="text-lg text-center">
+          Enjoy excellent exchange rates for EUR, USD and GBP
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <form className="w-full h-2/3 bg-stone-50 rounded p-2">
+          <div className="flex flex-row bg-white py-2 my-2 rounded">
+            <div className="relative w-3/6 hover:bg-stone-50">
+              <select
+                className="block appearance-none bg-white text-gray-700 py-3 px-4 pr-8 focus:outline-none focus:bg-white"
+                id="grid-state"
+              >
+                <option>EUR</option>
+                <option>USD</option>
+                <option>GBP</option>
+              </select>
+              <div
+                className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-gray-400"
+              >
+                <svg
+                  className="fill-current h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="w-4/6">
+              <input
+                className="appearance-none block w-full text-right text-gray-700 py-4 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="grid-city"
+                type="number"
+                placeholder="0"
+                name="primaryCurrency"
+              />
+            </div>
+          </div>
+          <FontAwesomeIcon icon={faArrowCircleDown} size="lg" className="text-blue-600 absolute m-auto left-1/2" />
+          <div className="flex flex-row bg-white py-2 my-2 rounded">
+            <div className="relative w-3/6 hover:bg-stone-50">
+              <select
+                className="block appearance-none bg-white text-gray-700 py-3 px-4 pr-8 focus:outline-none focus:bg-white"
+                id="grid-state"
+              >
+                <option>EUR</option>
+                <option>USD</option>
+                <option>GBP</option>
+              </select>
+              <div
+                className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-gray-400"
+              >
+                <svg
+                  className="fill-current h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="w-4/6">
+              <input
+                className="appearance-none block w-full text-right text-gray-700 py-4 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="grid-city"
+                type="number"
+                placeholder="0"
+                name="secondaryCurrency"
+              />
+            </div>
+          </div>
+          <div className="flex flex-row bg-white py-2 mt-10 rounded">
+            <div className="flex flex-row justify-between w-full p-4">
+              <p className="text-xs">
+                £1 = €1.1946
+              </p>
+              <p className="text-xs">
+                Our current rate
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-row py-2 mt-6 rounded justify-center">
+            <button type="submit" className="bg-blue-600 rounded-lg py-3 text-white px-20 font-semibold shadow-md shadow-current shadow-blue-500/50">
+              Exchange money
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
