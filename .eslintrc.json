@@ -22,7 +22,7 @@
       { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
     ],
     "import/extensions": [
-      "error",
+      "warn",
       "ignorePackages",
       { "js": "never", "jsx": "never", "ts": "never", "tsx": "never" }
     ]
