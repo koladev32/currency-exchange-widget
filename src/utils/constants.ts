@@ -11,3 +11,9 @@ export const symbols:ISymbols = {
   USD: "$",
   GBP: "£",
 };
+
+export const symbolsEmojis: ISymbols = {
+  EUR: "🇪🇺 EUR",
+  USD: "🇺🇸 USD",
+  GBP: "🇬🇧 GBP",
+};
