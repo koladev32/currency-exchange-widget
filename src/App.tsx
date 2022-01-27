@@ -1,9 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowCircleDown } from "@fortawesome/free-solid-svg-icons";
 import "./App.css";
+import { useGetRatesBetweenCurrenciesQuery } from "./services/rates";
+import Rate from "./components/Rate";
 
 function App() {
+  const [primaryCurrency, setPrimaryCurrency] = useState("EUR");
+  const [secondaryCurrency, setSecondaryCurrency] = useState("GBP");
+  const [rate, setRate] = useState(0);
+
+  const { data } = useGetRatesBetweenCurrenciesQuery(
+    { primaryCurrency, secondaryCurrency },
+  );
+  useEffect(() => {
+    if (data) {
+      setRate(data.rates[secondaryCurrency]);
+    }
+  }, [data, secondaryCurrency, primaryCurrency]);
+
   return (
     <div className="w-screen h-screen flex justify-center items-center">
       <div className="flex flex-col w-5/6 h-10/12 p-2 lg:h-11/12">
@@ -60,14 +75,11 @@ function App() {
             </div>
           </div>
           <div className="flex flex-row bg-white py-2 mt-10 rounded">
-            <div className="flex flex-row justify-between w-full p-4 font-semibold">
-              <p className="text-xs">
-                £1 = €1.1946
-              </p>
-              <p className="text-xs">
-                Our current rate
-              </p>
-            </div>
+            <Rate
+              primaryCurrency={primaryCurrency}
+              secondaryCurrency={secondaryCurrency}
+              rate={rate}
+            />
           </div>
           <div className="flex flex-row py-2 mt-6 rounded justify-center">
             <button type="submit" className="bg-blue-600 rounded-lg py-3 text-white px-16 font-semibold shadow-md shadow-blue-500/50 md:px-40 lg:px-36">
