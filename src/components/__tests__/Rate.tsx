@@ -9,12 +9,13 @@ const fixtures = {
   rate: 1.985,
 };
 
-test("renders learn react link", () => {
+test("renders rate", () => {
   render(
     <Rate
       primaryCurrency={fixtures.primaryCurrency}
       secondaryCurrency={fixtures.secondaryCurrency}
       rate={fixtures.rate}
+      isLoading={false}
     />,
   );
   const linkElement = screen.getByText(/Our current rate/i);
