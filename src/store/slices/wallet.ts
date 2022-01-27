@@ -4,7 +4,7 @@ import WALLET_MOCK from "../../mock/wallet";
 import { Wallet } from "../../models/wallet";
 import { TransactionType } from "../../enums/transactions";
 
-const initialState: Wallet = WALLET_MOCK;
+export const initialState: Wallet = JSON.parse(JSON.stringify(WALLET_MOCK));
 
 interface CreditPayload {
   transactionType: TransactionType.credit;
@@ -22,15 +22,11 @@ export const walletSlice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
-    incrementByAmount: (state, action: PayloadAction<CreditPayload>) => {
-      // @ts-ignore
-      // eslint-disable-next-line no-param-reassign
-      state[action.payload.currency].amount += action.payload.amount;
+    incrementByAmount: (state: Wallet, action: PayloadAction<CreditPayload>) => {
+      state[action.payload.currency].balance += action.payload.amount;
     },
-    decrementByAmount: (state, action: PayloadAction<DebitPayload>) => {
-      // @ts-ignore
-      // eslint-disable-next-line no-param-reassign
-      state[action.payload.currency].amount -= action.payload.amount;
+    decrementByAmount: (state: Wallet, action: PayloadAction<DebitPayload>) => {
+      state[action.payload.currency].balance -= action.payload.amount;
     },
   },
 });
