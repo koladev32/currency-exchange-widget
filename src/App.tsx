@@ -12,6 +12,9 @@ function App() {
 
   const { data } = useGetRatesBetweenCurrenciesQuery(
     { primaryCurrency, secondaryCurrency },
+    {
+      pollingInterval: 10000,
+    },
   );
   useEffect(() => {
     if (data) {
