@@ -1,1 +1,1 @@
-export const ApiURL = "https://openexchangerates.org/api/";
+export const ApiURL = "https://api.exchangerate.host/";
