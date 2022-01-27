@@ -3,7 +3,9 @@ import WALLET_MOCK from "../../../mock/wallet";
 import { TransactionType } from "../../../enums/transactions";
 
 test("should return initial state", () => {
-  expect(reducer(undefined, {})).toEqual(
+  expect(reducer(undefined, {
+    type: undefined,
+  })).toEqual(
     WALLET_MOCK,
   );
 });

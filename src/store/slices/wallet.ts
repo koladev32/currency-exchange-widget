@@ -23,10 +23,13 @@ export const walletSlice = createSlice({
   initialState,
   reducers: {
     incrementByAmount: (state: Wallet, action: PayloadAction<CreditPayload>) => {
-      state[action.payload.currency].balance += action.payload.amount;
+      const updatedState = state;
+      updatedState[action.payload.currency as keyof Wallet].balance += action.payload.amount;
     },
     decrementByAmount: (state: Wallet, action: PayloadAction<DebitPayload>) => {
-      state[action.payload.currency].balance -= action.payload.amount;
+      const updatedState = state;
+
+      updatedState[action.payload.currency as keyof Wallet].balance -= action.payload.amount;
     },
   },
 });
