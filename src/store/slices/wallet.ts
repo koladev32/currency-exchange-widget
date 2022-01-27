@@ -23,9 +23,13 @@ export const walletSlice = createSlice({
   initialState,
   reducers: {
     incrementByAmount: (state, action: PayloadAction<CreditPayload>) => {
+      // @ts-ignore
+      // eslint-disable-next-line no-param-reassign
       state[action.payload.currency].amount += action.payload.amount;
     },
     decrementByAmount: (state, action: PayloadAction<DebitPayload>) => {
+      // @ts-ignore
+      // eslint-disable-next-line no-param-reassign
       state[action.payload.currency].amount -= action.payload.amount;
     },
   },
@@ -33,6 +37,6 @@ export const walletSlice = createSlice({
 
 export const { incrementByAmount, decrementByAmount } = walletSlice.actions;
 
-export const selectWallet = (state: RootState) => state.wallet.value;
+export const selectWallet = (state: RootState) => state.wallet;
 
 export default walletSlice.reducer;
