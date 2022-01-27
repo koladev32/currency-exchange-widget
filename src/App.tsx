@@ -10,7 +10,7 @@ function App() {
   const [secondaryCurrency, setSecondaryCurrency] = useState("GBP");
   const [rate, setRate] = useState(0);
 
-  const { data } = useGetRatesBetweenCurrenciesQuery(
+  const { data, isLoading } = useGetRatesBetweenCurrenciesQuery(
     { primaryCurrency, secondaryCurrency },
     {
       pollingInterval: 10000,
@@ -35,12 +35,13 @@ function App() {
               <select
                 className="block appearance-none w-3/4 ml-2 hover:bg-stone-50 bg-white text-gray-700 py-3 px-4 pr-8 focus:outline-none focus:bg-white"
                 id="grid-state"
+                onChange={(event) => setPrimaryCurrency(event.target.value)}
               >
-                <option>
+                <option defaultChecked value="EUR">
                   🇪🇺 EUR
                 </option>
-                <option>🇺🇸 USD</option>
-                <option>🇬🇧 GBP</option>
+                <option value="USD">🇺🇸 USD</option>
+                <option value="GBP">🇬🇧 GBP</option>
               </select>
             </div>
             <div className="w-4/6">
@@ -59,12 +60,13 @@ function App() {
               <select
                 className="block appearance-none bg-white ml-2 w-full hover:bg-stone-50 text-gray-700 py-3 px-4 pr-8 focus:outline-none focus:bg-white"
                 id="grid-state"
+                onChange={(event) => setSecondaryCurrency(event.target.value)}
               >
-                <option>
+                <option value="EUR">
                   🇪🇺 EUR
                 </option>
-                <option>🇺🇸 USD</option>
-                <option>🇬🇧 GBP</option>
+                <option defaultChecked value="USD">🇺🇸 USD</option>
+                <option value="GBP">🇬🇧 GBP</option>
               </select>
             </div>
             <div className="w-4/6">
