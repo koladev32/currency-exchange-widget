@@ -1,40 +1,73 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowCircleDown } from "@fortawesome/free-solid-svg-icons";
 import "./App.css";
+import { useSelector } from "react-redux";
+import { useGetRatesBetweenCurrenciesQuery } from "./services/rates";
+import Rate from "./components/Rate";
+import SelectCurrency from "./components/SelectCurrency";
+import { ISymbols, projectCurrencies } from "./utils/constants";
+import { RootState } from "./store";
+import BalanceText from "./components/BalanceText";
 
 function App() {
+  const wallet = useSelector((state: RootState) => state.wallet);
+
+  const [rate, setRate] = useState(0);
+  const [primaryCurrency, setPrimaryCurrency] = useState("EUR");
+
+  const primaryCurrenciesList = [...projectCurrencies];
+  const [secondaryCurrenciesList, setSecondaryCurrenciesList] = useState(
+    [...primaryCurrenciesList].filter(
+      (value) => value !== primaryCurrency,
+    ),
+  );
+
+  const [secondaryCurrency, setSecondaryCurrency] = useState(secondaryCurrenciesList[0]);
+
+  // eslint-disable-next-line no-console
+  console.log(primaryCurrency, secondaryCurrency, secondaryCurrenciesList[0]);
+  const { data, isLoading } = useGetRatesBetweenCurrenciesQuery(
+    { primaryCurrency, secondaryCurrency },
+    {
+      pollingInterval: 10000,
+    },
+  );
+  useEffect(() => {
+    if (data) {
+      setRate(data.rates[secondaryCurrency]);
+    }
+    // Refreshing the secondaryCurrency value because it directly points to a reference
+
+    setSecondaryCurrenciesList([...primaryCurrenciesList].filter(
+      (value) => value !== primaryCurrency,
+    ));
+    setSecondaryCurrency(secondaryCurrenciesList[0]);
+  }, [data, secondaryCurrency, primaryCurrency]);
+
   return (
     <div className="w-screen h-screen flex justify-center items-center">
       <div className="flex flex-col w-5/6 h-10/12 p-2 lg:h-11/12">
-        <h2 className="text-2xl font-semibold text-center">Currency exchange</h2>
+        <h2 className="text-2xl font-semibold text-center">
+          Currency exchange
+        </h2>
         <p className="text-lg text-center">
-          Enjoy excellent exchange rates for EUR, USD and GBP
+          Enjoy excellent exchange rates for EUR, USD and GBPs
         </p>
         <form className="w-full flex flex-col h-2/3 bg-stone-50 rounded p-2 md:w-9/12 md:self-center md:p-4 lg:w-5/12 lg:h-10/12">
           <div className="flex flex-row bg-white py-2 my-2 rounded">
-            <div className="relative w-3/6 hover:bg-stone-50">
-              <select
-                className="block appearance-none bg-white text-gray-700 py-3 px-4 pr-8 focus:outline-none focus:bg-white"
-                id="grid-state"
-              >
-                <option>EUR</option>
-                <option>USD</option>
-                <option>GBP</option>
-              </select>
-              <div
-                className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-gray-400"
-              >
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-                  />
-                </svg>
-              </div>
+            <div className="relative w-3/6">
+              {/*
+              For primary currency selection
+              */}
+              <SelectCurrency
+                currencies={primaryCurrenciesList}
+                onChange={setPrimaryCurrency}
+              />
+              <BalanceText
+                balance={wallet[primaryCurrency as keyof ISymbols].balance}
+                currency={primaryCurrency}
+              />
             </div>
             <div className="w-4/6">
               <input
@@ -46,30 +79,25 @@ function App() {
               />
             </div>
           </div>
-          <FontAwesomeIcon id="arrow-exchange" icon={faArrowCircleDown} size="lg" className="text-blue-600 self-center" />
+          <FontAwesomeIcon
+            id="arrow-exchange"
+            icon={faArrowCircleDown}
+            size="lg"
+            className="text-blue-600 self-center"
+          />
           <div className="flex flex-row bg-white py-2 my-2 rounded">
-            <div className="relative w-3/6 hover:bg-stone-50">
-              <select
-                className="block appearance-none bg-white text-gray-700 py-3 px-4 pr-8 focus:outline-none focus:bg-white"
-                id="grid-state"
-              >
-                <option>EUR</option>
-                <option>USD</option>
-                <option>GBP</option>
-              </select>
-              <div
-                className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-gray-400"
-              >
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-                  />
-                </svg>
-              </div>
+            <div className="relative w-3/6">
+              {/*
+              For secondary currency selection
+              */}
+              <SelectCurrency
+                currencies={secondaryCurrenciesList}
+                onChange={setSecondaryCurrency}
+              />
+              <BalanceText
+                balance={wallet[secondaryCurrency as keyof ISymbols].balance}
+                currency={secondaryCurrency}
+              />
             </div>
             <div className="w-4/6">
               <input
@@ -82,17 +110,18 @@ function App() {
             </div>
           </div>
           <div className="flex flex-row bg-white py-2 mt-10 rounded">
-            <div className="flex flex-row justify-between w-full p-4 font-semibold">
-              <p className="text-xs">
-                £1 = €1.1946
-              </p>
-              <p className="text-xs">
-                Our current rate
-              </p>
-            </div>
+            <Rate
+              primaryCurrency={primaryCurrency}
+              secondaryCurrency={secondaryCurrency}
+              rate={rate}
+              isLoading={isLoading}
+            />
           </div>
           <div className="flex flex-row py-2 mt-6 rounded justify-center">
-            <button type="submit" className="bg-blue-600 rounded-lg py-3 text-white px-16 font-semibold shadow-md shadow-blue-500/50 md:px-40 lg:px-36">
+            <button
+              type="submit"
+              className="bg-blue-600 rounded-lg py-3 text-white px-16 font-semibold shadow-md shadow-blue-500/50 md:px-40 lg:px-36"
+            >
               Exchange money
             </button>
           </div>
