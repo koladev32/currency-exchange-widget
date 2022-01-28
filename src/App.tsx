@@ -8,6 +8,7 @@ import Rate from "./components/Rate";
 import SelectCurrency from "./components/SelectCurrency";
 import { ISymbols, projectCurrencies } from "./utils/constants";
 import { RootState } from "./store";
+import BalanceText from "./components/BalanceText";
 
 function App() {
   const wallet = useSelector((state: RootState) => state.wallet);
@@ -63,11 +64,10 @@ function App() {
                 currencies={primaryCurrenciesList}
                 onChange={setPrimaryCurrency}
               />
-              <p className="text-xs ml-2 pl-4 w-full">
-                Balance:
-                {" "}
-                {wallet[primaryCurrency as keyof ISymbols].balance}
-              </p>
+              <BalanceText
+                balance={wallet[primaryCurrency as keyof ISymbols].balance}
+                currency={primaryCurrency}
+              />
             </div>
             <div className="w-4/6">
               <input
@@ -94,11 +94,10 @@ function App() {
                 currencies={secondaryCurrenciesList}
                 onChange={setSecondaryCurrency}
               />
-              <p className="text-xs ml-2 pl-4 w-full">
-                Balance:
-                {" "}
-                {wallet[secondaryCurrency as keyof ISymbols].balance}
-              </p>
+              <BalanceText
+                balance={wallet[secondaryCurrency as keyof ISymbols].balance}
+                currency={secondaryCurrency}
+              />
             </div>
             <div className="w-4/6">
               <input
