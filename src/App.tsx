@@ -2,22 +2,30 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowCircleDown } from "@fortawesome/free-solid-svg-icons";
 import "./App.css";
+import { useSelector } from "react-redux";
 import { useGetRatesBetweenCurrenciesQuery } from "./services/rates";
 import Rate from "./components/Rate";
 import SelectCurrency from "./components/SelectCurrency";
-import { projectCurrencies } from "./utils/constants";
+import { ISymbols, projectCurrencies } from "./utils/constants";
+import { RootState } from "./store";
 
 function App() {
+  const wallet = useSelector((state: RootState) => state.wallet);
+
   const [rate, setRate] = useState(0);
   const [primaryCurrency, setPrimaryCurrency] = useState("EUR");
 
   const primaryCurrenciesList = [...projectCurrencies];
-  const secondaryCurrenciesList = [...projectCurrencies].filter(
-    (value) => value !== primaryCurrency,
+  const [secondaryCurrenciesList, setSecondaryCurrenciesList] = useState(
+    [...primaryCurrenciesList].filter(
+      (value) => value !== primaryCurrency,
+    ),
   );
 
   const [secondaryCurrency, setSecondaryCurrency] = useState(secondaryCurrenciesList[0]);
 
+  // eslint-disable-next-line no-console
+  console.log(primaryCurrency, secondaryCurrency, secondaryCurrenciesList[0]);
   const { data, isLoading } = useGetRatesBetweenCurrenciesQuery(
     { primaryCurrency, secondaryCurrency },
     {
@@ -28,6 +36,12 @@ function App() {
     if (data) {
       setRate(data.rates[secondaryCurrency]);
     }
+    // Refreshing the secondaryCurrency value because it directly points to a reference
+
+    setSecondaryCurrenciesList([...primaryCurrenciesList].filter(
+      (value) => value !== primaryCurrency,
+    ));
+    setSecondaryCurrency(secondaryCurrenciesList[0]);
   }, [data, secondaryCurrency, primaryCurrency]);
 
   return (
@@ -37,7 +51,7 @@ function App() {
           Currency exchange
         </h2>
         <p className="text-lg text-center">
-          Enjoy excellent exchange rates for EUR, USD and GBP
+          Enjoy excellent exchange rates for EUR, USD and GBPs
         </p>
         <form className="w-full flex flex-col h-2/3 bg-stone-50 rounded p-2 md:w-9/12 md:self-center md:p-4 lg:w-5/12 lg:h-10/12">
           <div className="flex flex-row bg-white py-2 my-2 rounded">
@@ -49,6 +63,11 @@ function App() {
                 currencies={primaryCurrenciesList}
                 onChange={setPrimaryCurrency}
               />
+              <p className="text-xs ml-2 pl-4 w-full">
+                Balance:
+                {" "}
+                {wallet[primaryCurrency as keyof ISymbols].balance}
+              </p>
             </div>
             <div className="w-4/6">
               <input
@@ -75,6 +94,11 @@ function App() {
                 currencies={secondaryCurrenciesList}
                 onChange={setSecondaryCurrency}
               />
+              <p className="text-xs ml-2 pl-4 w-full">
+                Balance:
+                {" "}
+                {wallet[secondaryCurrency as keyof ISymbols].balance}
+              </p>
             </div>
             <div className="w-4/6">
               <input
