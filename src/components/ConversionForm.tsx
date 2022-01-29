@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormikProvider, useFormik } from "formik";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowCircleDown } from "@fortawesome/free-solid-svg-icons";
@@ -7,45 +7,41 @@ import * as Yup from "yup";
 import { useSelector } from "react-redux";
 import SelectCurrency from "./SelectCurrency";
 import BalanceText from "./BalanceText";
-import { intrudersKeysValues, ISymbols } from "../utils/constants";
+import { intrudersKeysValues, ISymbols, projectCurrencies } from "../utils/constants";
 import Rate from "./Rate";
 import { RootState, store } from "../store";
 import { walletSlice } from "../store/slices/wallet";
 import { TransactionType } from "../enums/transactions";
+import { useGetRatesBetweenCurrenciesQuery } from "../services/rates";
 
-interface IConversionForm {
-  primaryCurrency: string;
-  secondaryCurrency: string;
-  rate: number;
-  isLoading: boolean;
-  secondaryCurrenciesList: Array<string>;
-  primaryCurrenciesList: Array<string>;
-  onChangePrimaryCurrency: () => void;
-  onChangeSecondCurrency: () => void;
-}
-
-const ConversionForm: React.FC<IConversionForm> = ({
-  primaryCurrency,
-  secondaryCurrency,
-  rate,
-  isLoading,
-  secondaryCurrenciesList,
-  primaryCurrenciesList,
-  onChangePrimaryCurrency,
-  onChangeSecondCurrency,
-}) => {
+const ConversionForm = () => {
   const wallet = useSelector((state: RootState) => state.wallet);
+
+  const [rate, setRate] = useState(0);
+  const [primaryCurrency, setPrimaryCurrency] = useState("EUR");
+  const [secondCurrencyAmount, setSecondCurrencyAmount] = useState(rate);
+
+  const primaryCurrenciesList = [...projectCurrencies];
+  const [secondaryCurrenciesList, setSecondaryCurrenciesList] = useState(
+    [...primaryCurrenciesList].filter((value) => value !== primaryCurrency),
+  );
+
+  const [secondaryCurrency, setSecondaryCurrency] = useState(
+    secondaryCurrenciesList[0],
+  );
+
+  const { data, isLoading } = useGetRatesBetweenCurrenciesQuery(
+    { primaryCurrency, secondaryCurrency },
+    {
+      pollingInterval: 10000,
+    },
+  );
 
   const validationConversionForm = Yup.object({
     primaryCurrency: Yup.string().trim().required(),
     secondaryCurrency: Yup.string().trim().required(),
-    amount: Yup.number()
-      .lessThan(wallet[primaryCurrency as keyof ISymbols].balance)
-      .moreThan(0)
-      .required(),
+    amount: Yup.number().lessThan(wallet[primaryCurrency as keyof ISymbols].balance).moreThan(0).required(),
   });
-
-  const [secondCurrencyAmount, setSecondCurrencyAmount] = useState(rate);
 
   const formik = useFormik({
     initialValues: {
@@ -54,32 +50,45 @@ const ConversionForm: React.FC<IConversionForm> = ({
       amount: 0,
     },
     onSubmit: (values) => {
-      store.dispatch(
-        walletSlice.actions.incrementByAmount({
+      store.dispatch(walletSlice.actions.incrementByAmount(
+        {
           currency: values.secondaryCurrency,
           amount: secondCurrencyAmount,
           transactionType: TransactionType.credit,
-        }),
-      );
+        },
+      ));
 
-      store.dispatch(
-        walletSlice.actions.decrementByAmount({
+      store.dispatch(walletSlice.actions.decrementByAmount(
+        {
           currency: values.primaryCurrency,
           amount: values.amount,
           transactionType: TransactionType.debit,
-        }),
-      );
-
-      toast.success(
-        `You've successfully exchanged ${values.amount}
-       ${primaryCurrency} to ${secondCurrencyAmount} ${secondaryCurrency}`,
-        {
-          position: toast.POSITION.BOTTOM_RIGHT,
         },
-      );
+      ));
+
+      toast.success(`You've successfully exchanged ${values.amount}
+       ${primaryCurrency} to ${secondCurrencyAmount} ${secondaryCurrency}`, {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
     },
     validationSchema: validationConversionForm,
   });
+
+
+  useEffect(() => {
+    if (data) {
+      setRate(data.rates[secondaryCurrency]);
+    }
+    // Refreshing the secondaryCurrency value because it directly points to a reference
+
+    setSecondaryCurrenciesList(
+      [...primaryCurrenciesList].filter((value) => value !== primaryCurrency),
+    );
+    setSecondaryCurrency(secondaryCurrenciesList[0]);
+
+    formik.values.primaryCurrency = primaryCurrency;
+    formik.values.secondaryCurrency = secondaryCurrency;
+  }, [data, secondaryCurrency, primaryCurrency]);
 
   return (
     <FormikProvider value={formik}>
@@ -94,7 +103,7 @@ const ConversionForm: React.FC<IConversionForm> = ({
               */}
             <SelectCurrency
               currencies={primaryCurrenciesList}
-              onChange={onChangePrimaryCurrency}
+              onChange={setPrimaryCurrency}
             />
             <BalanceText
               balance={wallet[primaryCurrency as keyof ISymbols].balance}
@@ -140,7 +149,7 @@ const ConversionForm: React.FC<IConversionForm> = ({
               */}
             <SelectCurrency
               currencies={secondaryCurrenciesList}
-              onChange={onChangeSecondCurrency}
+              onChange={setSecondaryCurrency}
             />
             <BalanceText
               balance={wallet[secondaryCurrency as keyof ISymbols].balance}

@@ -11,12 +11,7 @@ const fixtures = {
 
 test("renders FormComponent", () => {
   render(
-    <ConversionForm
-      primaryCurrency={fixtures.primaryCurrency}
-      secondaryCurrency={fixtures.secondaryCurrency}
-      rate={fixtures.rate}
-      isLoading={fixtures.isLoading}
-    />,
+    <ConversionForm />,
   );
   const primaryCurrencyElement = screen.getAllByPlaceholderText("0");
   expect(primaryCurrencyElement).toBeInTheDocument();
