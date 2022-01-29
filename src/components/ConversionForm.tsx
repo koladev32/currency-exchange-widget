@@ -136,12 +136,6 @@ const ConversionForm = () => {
             ) : null}
           </div>
         </div>
-        <FontAwesomeIcon
-          id="arrow-exchange"
-          icon={faArrowCircleDown}
-          size="lg"
-          className="text-blue-600 self-center"
-        />
         <div className="flex flex-row bg-white py-2 my-2 rounded">
           <div className="relative w-3/6">
             {/*
