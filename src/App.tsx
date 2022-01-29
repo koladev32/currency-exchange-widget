@@ -35,7 +35,7 @@ function App() {
   const validationConversionForm = Yup.object({
     primaryCurrency: Yup.string().trim().required(),
     secondaryCurrency: Yup.string().trim().required(),
-    amount: Yup.number().lessThan(wallet[primaryCurrency as keyof ISymbols].balance).required(),
+    amount: Yup.number().lessThan(wallet[primaryCurrency as keyof ISymbols].balance).moreThan(0).required(),
   });
 
   const formik = useFormik({
@@ -104,7 +104,6 @@ function App() {
             className="w-full flex flex-col h-2/3 bg-stone-50 rounded p-2 md:w-9/12 md:self-center md:p-4 lg:w-5/12 lg:h-10/12"
             onSubmit={formik.handleSubmit}
           >
-            <Field name="lastName" placeholder="Last Name" as="number" />
             <div className="flex flex-row bg-white py-2 my-2 rounded">
               <div className="relative w-3/6">
                 {/*
