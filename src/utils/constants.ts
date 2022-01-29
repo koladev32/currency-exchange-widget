@@ -17,3 +17,5 @@ export const symbolsEmojis: ISymbols = {
   USD: "🇺🇸 USD",
   GBP: "🇬🇧 GBP",
 };
+
+export const intrudersKeysValues = ["+", "*", "/", "-", "="];
