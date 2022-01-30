@@ -12,7 +12,7 @@ import { walletSlice } from "../store/slices/wallet";
 import { TransactionType } from "../enums/transactions";
 import { useGetRatesBetweenCurrenciesQuery } from "../services/rates";
 
-const ConversionForm = () => {
+const ExchangeForm = () => {
   const wallet = useSelector((state: RootState) => state.wallet);
 
   const [rate, setRate] = useState(0);
@@ -179,4 +179,4 @@ const ConversionForm = () => {
   );
 };
 
-export default ConversionForm;
+export default ExchangeForm;

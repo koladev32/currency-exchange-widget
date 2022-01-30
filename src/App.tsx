@@ -4,7 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useGetRatesBetweenCurrenciesQuery } from "./services/rates";
 import { projectCurrencies } from "./utils/constants";
-import ConversionForm from "./components/ConversionForm";
+import ExchangeForm from "./components/ExchangeForm";
 
 function App() {
 
@@ -17,7 +17,7 @@ function App() {
         <p className="text-lg text-center">
           Enjoy excellent exchange rates for EUR, USD and GBPs
         </p>
-        <ConversionForm />
+        <ExchangeForm />
       </div>
       <ToastContainer />
     </div>
