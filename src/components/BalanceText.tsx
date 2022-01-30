@@ -2,7 +2,7 @@ import React from "react";
 import { ISymbols, symbols } from "../utils/constants";
 
 interface IBalanceText {
-  balance: number|string;
+  balance: number | string;
   currency: string;
 }
 

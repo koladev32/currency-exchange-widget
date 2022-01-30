@@ -3,11 +3,11 @@ import WALLET_MOCK from "../../../mock/wallet";
 import { TransactionType } from "../../../enums/transactions";
 
 test("should return initial state", () => {
-  expect(reducer(undefined, {
-    type: undefined,
-  })).toEqual(
-    WALLET_MOCK,
-  );
+  expect(
+    reducer(undefined, {
+      type: undefined,
+    })
+  ).toEqual(WALLET_MOCK);
 });
 
 test("should increment EUR balance", () => {
@@ -16,9 +16,16 @@ test("should increment EUR balance", () => {
   const expectedState = JSON.parse(JSON.stringify(WALLET_MOCK));
   expectedState.EUR.balance += 500;
 
-  expect(reducer(previousState, incrementByAmount({ currency: "EUR", amount: 500, transactionType: TransactionType.credit }))).toEqual(
-    expectedState,
-  );
+  expect(
+    reducer(
+      previousState,
+      incrementByAmount({
+        currency: "EUR",
+        amount: 500,
+        transactionType: TransactionType.credit,
+      })
+    )
+  ).toEqual(expectedState);
 });
 
 test("should decrement EUR balance", () => {
@@ -27,7 +34,14 @@ test("should decrement EUR balance", () => {
   const expectedState = JSON.parse(JSON.stringify(WALLET_MOCK));
   expectedState.EUR.balance -= 500;
 
-  expect(reducer(previousState, decrementByAmount({ currency: "EUR", amount: 500, transactionType: TransactionType.debit }))).toEqual(
-    expectedState,
-  );
+  expect(
+    reducer(
+      previousState,
+      decrementByAmount({
+        currency: "EUR",
+        amount: 500,
+        transactionType: TransactionType.debit,
+      })
+    )
+  ).toEqual(expectedState);
 });
