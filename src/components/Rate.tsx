@@ -2,14 +2,14 @@ import React from "react";
 import { ISymbols, symbols } from "../utils/constants";
 
 interface IRate {
-  primaryCurrency: string;
-  secondaryCurrency: string;
+  baseCurrency: string;
+  targetCurrency: string;
   rate: number;
   isLoading: boolean;
 }
 
 const Rate: React.FC<IRate> = ({
-  primaryCurrency, secondaryCurrency, rate,
+  baseCurrency, targetCurrency, rate,
   isLoading = false,
 }) => {
   if (isLoading) {
@@ -20,11 +20,11 @@ const Rate: React.FC<IRate> = ({
     <div className="flex flex-row justify-between w-full p-4 font-semibold">
       <div className="flex flex-row text-xs">
         <p>
-          {symbols[primaryCurrency as keyof ISymbols]}
+          {symbols[baseCurrency as keyof ISymbols]}
         </p>
         1 =
         <p>
-          {symbols[secondaryCurrency as keyof ISymbols]}
+          {symbols[targetCurrency as keyof ISymbols]}
         </p>
         <p>
           { rate }

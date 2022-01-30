@@ -4,16 +4,16 @@ import Rate from "../Rate";
 import { ISymbols, symbols } from "../../utils/constants";
 
 const fixtures = {
-  primaryCurrency: "GBP",
-  secondaryCurrency: "USD",
+  baseCurrency: "GBP",
+  targetCurrency: "USD",
   rate: 1.985,
 };
 
 test("renders rate", () => {
   render(
     <Rate
-      primaryCurrency={fixtures.primaryCurrency}
-      secondaryCurrency={fixtures.secondaryCurrency}
+      baseCurrency={fixtures.baseCurrency}
+      targetCurrency={fixtures.targetCurrency}
       rate={fixtures.rate}
       isLoading={false}
     />,
@@ -23,10 +23,10 @@ test("renders rate", () => {
 
   // Checking if actual rate and currencies symbols are rendered
 
-  const primaryCurrencyElement = screen.getByText(`${symbols[fixtures.primaryCurrency as keyof ISymbols]}`);
+  const primaryCurrencyElement = screen.getByText(`${symbols[fixtures.baseCurrency as keyof ISymbols]}`);
   expect(primaryCurrencyElement).toBeInTheDocument();
 
-  const secondCurrencyElement = screen.getByText(`${symbols[fixtures.secondaryCurrency as keyof ISymbols]}`);
+  const secondCurrencyElement = screen.getByText(`${symbols[fixtures.targetCurrency as keyof ISymbols]}`);
   expect(secondCurrencyElement).toBeInTheDocument();
 
   const rateElement = screen.getByText(`${fixtures.rate}`);

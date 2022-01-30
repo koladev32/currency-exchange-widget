@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { FormikProvider, useFormik } from "formik";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowCircleDown } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
@@ -18,20 +16,20 @@ const ConversionForm = () => {
   const wallet = useSelector((state: RootState) => state.wallet);
 
   const [rate, setRate] = useState(0);
-  const [primaryCurrency, setPrimaryCurrency] = useState("EUR");
-  const [secondCurrencyAmount, setSecondCurrencyAmount] = useState(rate);
+  const [baseCurrency, setBaseCurrency] = useState("EUR");
+  const [targetCurrencyAmount, setTargetCurrencyAmount] = useState(rate);
 
-  const primaryCurrenciesList = [...projectCurrencies];
-  const [secondaryCurrenciesList, setSecondaryCurrenciesList] = useState(
-    [...primaryCurrenciesList].filter((value) => value !== primaryCurrency),
+  const baseCurrenciesList = [...projectCurrencies];
+  const [targetCurrenciesList, setTargetCurrenciesList] = useState(
+    [...baseCurrenciesList].filter((value) => value !== baseCurrency),
   );
 
-  const [secondaryCurrency, setSecondaryCurrency] = useState(
-    secondaryCurrenciesList[0],
+  const [targetCurrency, setTargetCurrency] = useState(
+    targetCurrenciesList[0],
   );
 
   const { data, isLoading } = useGetRatesBetweenCurrenciesQuery(
-    { primaryCurrency, secondaryCurrency },
+    { baseCurrency, targetCurrency },
     {
       pollingInterval: 10000,
     },
@@ -39,35 +37,35 @@ const ConversionForm = () => {
 
   const validationConversionForm = Yup.object({
     primaryCurrency: Yup.string().trim().required(),
-    secondaryCurrency: Yup.string().trim().required(),
-    amount: Yup.number().lessThan(wallet[primaryCurrency as keyof ISymbols].balance).moreThan(0).required(),
+    targetCurrency: Yup.string().trim().required(),
+    amount: Yup.number().lessThan(wallet[baseCurrency as keyof ISymbols].balance).moreThan(0).required(),
   });
 
   const formik = useFormik({
     initialValues: {
-      primaryCurrency,
-      secondaryCurrency,
+      baseCurrency: baseCurrency,
+      targetCurrency,
       amount: 0,
     },
     onSubmit: (values) => {
       store.dispatch(walletSlice.actions.incrementByAmount(
         {
-          currency: values.secondaryCurrency,
-          amount: secondCurrencyAmount,
+          currency: values.targetCurrency,
+          amount: targetCurrencyAmount,
           transactionType: TransactionType.credit,
         },
       ));
 
       store.dispatch(walletSlice.actions.decrementByAmount(
         {
-          currency: values.primaryCurrency,
+          currency: values.baseCurrency,
           amount: values.amount,
           transactionType: TransactionType.debit,
         },
       ));
 
       toast.success(`You've successfully exchanged ${values.amount}
-       ${primaryCurrency} to ${secondCurrencyAmount} ${secondaryCurrency}`, {
+       ${baseCurrency} to ${targetCurrencyAmount} ${targetCurrency}`, {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
     },
@@ -77,18 +75,18 @@ const ConversionForm = () => {
 
   useEffect(() => {
     if (data) {
-      setRate(data.rates[secondaryCurrency]);
+      setRate(data.rates[targetCurrency]);
     }
-    // Refreshing the secondaryCurrency value because it directly points to a reference
+    // Refreshing the targetCurrency value because it directly points to a reference
 
-    setSecondaryCurrenciesList(
-      [...primaryCurrenciesList].filter((value) => value !== primaryCurrency),
+    setTargetCurrenciesList(
+      [...baseCurrenciesList].filter((value) => value !== baseCurrency),
     );
-    setSecondaryCurrency(secondaryCurrenciesList[0]);
+    setTargetCurrency(targetCurrenciesList[0]);
 
-    formik.values.primaryCurrency = primaryCurrency;
-    formik.values.secondaryCurrency = secondaryCurrency;
-  }, [data, secondaryCurrency, primaryCurrency]);
+    formik.values.baseCurrency = baseCurrency;
+    formik.values.targetCurrency = targetCurrency;
+  }, [data, targetCurrency, baseCurrency]);
 
   return (
     <FormikProvider value={formik}>
@@ -102,12 +100,12 @@ const ConversionForm = () => {
               For primary currency selection
               */}
             <SelectCurrency
-              currencies={primaryCurrenciesList}
-              onChange={setPrimaryCurrency}
+              currencies={baseCurrenciesList}
+              onChange={setBaseCurrency}
             />
             <BalanceText
-              balance={wallet[primaryCurrency as keyof ISymbols].balance}
-              currency={primaryCurrency}
+              balance={wallet[baseCurrency as keyof ISymbols].balance}
+              currency={baseCurrency}
             />
           </div>
           <div className="w-4/6">
@@ -120,7 +118,7 @@ const ConversionForm = () => {
               value={formik.values.amount}
               onChange={(e) => {
                 formik.handleChange(e);
-                setSecondCurrencyAmount(e.target.value * rate);
+                setTargetCurrencyAmount(e.target.value * rate);
               }}
               onBlur={formik.handleBlur}
               onKeyPress={(e) => {
@@ -142,12 +140,12 @@ const ConversionForm = () => {
               For secondary currency selection
               */}
             <SelectCurrency
-              currencies={secondaryCurrenciesList}
-              onChange={setSecondaryCurrency}
+              currencies={targetCurrenciesList}
+              onChange={setTargetCurrency}
             />
             <BalanceText
-              balance={wallet[secondaryCurrency as keyof ISymbols].balance}
-              currency={secondaryCurrency}
+              balance={wallet[targetCurrency as keyof ISymbols].balance}
+              currency={targetCurrency}
             />
           </div>
           <div className="w-4/6">
@@ -155,15 +153,15 @@ const ConversionForm = () => {
               className="appearance-none block w-full text-right text-gray-700 py-4 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="grid-city"
               type="number"
-              name="secondaryCurrency"
-              value={secondCurrencyAmount}
+              name="targetCurrency"
+              value={targetCurrencyAmount}
             />
           </div>
         </div>
         <div className="flex flex-row bg-white py-2 mt-10 rounded">
           <Rate
-            primaryCurrency={primaryCurrency}
-            secondaryCurrency={secondaryCurrency}
+            baseCurrency={baseCurrency}
+            targetCurrency={targetCurrency}
             rate={rate}
             isLoading={isLoading}
           />

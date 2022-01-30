@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../index";
 import WALLET_MOCK from "../../mock/wallet";
 import { Wallet } from "../../models/wallet";
 import { TransactionType } from "../../enums/transactions";
@@ -35,7 +34,5 @@ export const walletSlice = createSlice({
 });
 
 export const { incrementByAmount, decrementByAmount } = walletSlice.actions;
-
-export const selectWallet = (state: RootState) => state.wallet;
 
 export default walletSlice.reducer;
