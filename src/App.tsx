@@ -11,8 +11,8 @@ function App() {
         <h2 className="text-2xl font-semibold text-center">
           Currency exchange
         </h2>
-        <p className="text-lg text-center">
-          Enjoy excellent exchange rates for EUR, USD and GBPs
+        <p className="text-center">
+          Enjoy excellent exchange rates for EUR, USD and GBP
         </p>
         <ExchangeForm />
       </div>

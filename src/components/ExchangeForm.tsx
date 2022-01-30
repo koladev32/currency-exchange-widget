@@ -21,7 +21,7 @@ function ExchangeForm() {
 
   const [rate, setRate] = useState(0);
   const [baseCurrency, setBaseCurrency] = useState("EUR");
-  const [targetCurrencyAmount, setTargetCurrencyAmount] = useState(rate);
+  const [targetCurrencyAmount, setTargetCurrencyAmount] = useState(0);
 
   const baseCurrenciesList = [...projectCurrencies];
   const [targetCurrenciesList, setTargetCurrenciesList] = useState(
@@ -33,13 +33,11 @@ function ExchangeForm() {
   const { data, isLoading } = useGetRatesBetweenCurrenciesQuery(
     { baseCurrency, targetCurrency },
     {
-      pollingInterval: 10000,
+      pollingInterval: 50000,
     },
   );
 
   const validationConversionForm = Yup.object({
-    primaryCurrency: Yup.string().trim().required(),
-    targetCurrency: Yup.string().trim().required(),
     amount: Yup.number()
       .lessThan(wallet[baseCurrency as keyof ISymbols].balance)
       .moreThan(0)
@@ -48,14 +46,12 @@ function ExchangeForm() {
 
   const formik = useFormik({
     initialValues: {
-      baseCurrency,
-      targetCurrency,
       amount: 0,
     },
     onSubmit: (values) => {
       store.dispatch(
         walletSlice.actions.incrementByAmount({
-          currency: values.targetCurrency,
+          currency: targetCurrency,
           amount: targetCurrencyAmount,
           transactionType: TransactionType.credit,
         }),
@@ -63,7 +59,7 @@ function ExchangeForm() {
 
       store.dispatch(
         walletSlice.actions.decrementByAmount({
-          currency: values.baseCurrency,
+          currency: baseCurrency,
           amount: values.amount,
           transactionType: TransactionType.debit,
         }),
@@ -81,19 +77,17 @@ function ExchangeForm() {
   });
 
   useEffect(() => {
-    if (data) {
-      setRate(data.rates[targetCurrency]);
-    }
-    // Refreshing the targetCurrency value because it directly points to a reference
-
     setTargetCurrenciesList(
       [...baseCurrenciesList].filter((value) => value !== baseCurrency),
     );
     setTargetCurrency(targetCurrenciesList[0]);
+  }, [targetCurrency, baseCurrency]);
 
-    formik.values.baseCurrency = baseCurrency;
-    formik.values.targetCurrency = targetCurrency;
-  }, [data, targetCurrency, baseCurrency]);
+  useEffect(() => {
+    if (data) {
+      setRate(data.rates[targetCurrency].toFixed(2));
+    }
+  }, [data]);
 
   return (
     <FormikProvider value={formik}>
@@ -117,15 +111,15 @@ function ExchangeForm() {
           </div>
           <div className="w-4/6">
             <input
-              className="appearance-none block w-full text-right text-gray-700 py-4 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="grid-city"
+              className=" block w-full text-right rounded text-gray-700 py-4 px-4 leading-tight focus:outline-none
+              focus:bg-white focus:border focus:border-blue-100"
               type="number"
               placeholder="0"
               name="amount"
-              value={formik.values.amount}
+              value={formik.values.amount || ""}
               onChange={(e) => {
                 formik.handleChange(e);
-                setTargetCurrencyAmount(e.target.value * rate);
+                setTargetCurrencyAmount(parseFloat((e.target.value * rate).toFixed(2)));
               }}
               onBlur={formik.handleBlur}
               onKeyPress={(e) => {
@@ -133,11 +127,9 @@ function ExchangeForm() {
                   e.preventDefault();
                 }
               }}
-              min="0"
-              max="9999"
             />
             {formik.errors.amount ? (
-              <div className="text-red-500">{formik.errors.amount}</div>
+              <p className="text-red-500 text-xs text-left">{formik.errors.amount}</p>
             ) : null}
           </div>
         </div>
@@ -158,10 +150,10 @@ function ExchangeForm() {
           <div className="w-4/6">
             <input
               className="appearance-none block w-full text-right text-gray-700 py-4 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="grid-city"
               type="number"
               name="targetCurrency"
-              value={targetCurrencyAmount}
+              placeholder="0"
+              value={`+${targetCurrencyAmount}` || ""}
             />
           </div>
         </div>
@@ -176,7 +168,8 @@ function ExchangeForm() {
         <div className="flex flex-row py-2 mt-6 rounded justify-center">
           <button
             type="submit"
-            className="bg-blue-600 rounded-lg py-3 text-white px-16 font-semibold shadow-md shadow-blue-500/50 md:px-40 lg:px-36"
+            className={`${!formik.isValid || formik.isSubmitting || isLoading ? "bg-gray-400" : "bg-blue-600"} rounded-lg py-3 text-white px-16 
+            font-semibold shadow-md shadow-blue-500/50 md:px-40 lg:px-36`}
           >
             Exchange money
           </button>
