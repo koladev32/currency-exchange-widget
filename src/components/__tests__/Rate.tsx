@@ -23,10 +23,14 @@ test("renders rate", () => {
 
   // Checking if actual rate and currencies symbols are rendered
 
-  const primaryCurrencyElement = screen.getByText(`${symbols[fixtures.baseCurrency as keyof ISymbols]}`);
+  const primaryCurrencyElement = screen.getByText(
+    `${symbols[fixtures.baseCurrency as keyof ISymbols]}`,
+  );
   expect(primaryCurrencyElement).toBeInTheDocument();
 
-  const secondCurrencyElement = screen.getByText(`${symbols[fixtures.targetCurrency as keyof ISymbols]}`);
+  const secondCurrencyElement = screen.getByText(
+    `${symbols[fixtures.targetCurrency as keyof ISymbols]}`,
+  );
   expect(secondCurrencyElement).toBeInTheDocument();
 
   const rateElement = screen.getByText(`${fixtures.rate}`);

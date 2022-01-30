@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./App.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useGetRatesBetweenCurrenciesQuery } from "./services/rates";
-import { projectCurrencies } from "./utils/constants";
 import ExchangeForm from "./components/ExchangeForm";
 
 function App() {
-
   return (
     <div className="w-screen h-screen flex justify-center items-center">
       <div className="flex flex-col w-5/6 h-10/12 p-2 lg:h-11/12">

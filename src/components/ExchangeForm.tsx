@@ -5,14 +5,18 @@ import * as Yup from "yup";
 import { useSelector } from "react-redux";
 import SelectCurrency from "./SelectCurrency";
 import BalanceText from "./BalanceText";
-import { intrudersKeysValues, ISymbols, projectCurrencies } from "../utils/constants";
+import {
+  intrudersKeysValues,
+  ISymbols,
+  projectCurrencies,
+} from "../utils/constants";
 import Rate from "./Rate";
 import { RootState, store } from "../store";
 import { walletSlice } from "../store/slices/wallet";
 import { TransactionType } from "../enums/transactions";
 import { useGetRatesBetweenCurrenciesQuery } from "../services/rates";
 
-const ExchangeForm = () => {
+function ExchangeForm() {
   const wallet = useSelector((state: RootState) => state.wallet);
 
   const [rate, setRate] = useState(0);
@@ -24,9 +28,7 @@ const ExchangeForm = () => {
     [...baseCurrenciesList].filter((value) => value !== baseCurrency),
   );
 
-  const [targetCurrency, setTargetCurrency] = useState(
-    targetCurrenciesList[0],
-  );
+  const [targetCurrency, setTargetCurrency] = useState(targetCurrenciesList[0]);
 
   const { data, isLoading } = useGetRatesBetweenCurrenciesQuery(
     { baseCurrency, targetCurrency },
@@ -38,40 +40,45 @@ const ExchangeForm = () => {
   const validationConversionForm = Yup.object({
     primaryCurrency: Yup.string().trim().required(),
     targetCurrency: Yup.string().trim().required(),
-    amount: Yup.number().lessThan(wallet[baseCurrency as keyof ISymbols].balance).moreThan(0).required(),
+    amount: Yup.number()
+      .lessThan(wallet[baseCurrency as keyof ISymbols].balance)
+      .moreThan(0)
+      .required(),
   });
 
   const formik = useFormik({
     initialValues: {
-      baseCurrency: baseCurrency,
+      baseCurrency,
       targetCurrency,
       amount: 0,
     },
     onSubmit: (values) => {
-      store.dispatch(walletSlice.actions.incrementByAmount(
-        {
+      store.dispatch(
+        walletSlice.actions.incrementByAmount({
           currency: values.targetCurrency,
           amount: targetCurrencyAmount,
           transactionType: TransactionType.credit,
-        },
-      ));
+        }),
+      );
 
-      store.dispatch(walletSlice.actions.decrementByAmount(
-        {
+      store.dispatch(
+        walletSlice.actions.decrementByAmount({
           currency: values.baseCurrency,
           amount: values.amount,
           transactionType: TransactionType.debit,
-        },
-      ));
+        }),
+      );
 
-      toast.success(`You've successfully exchanged ${values.amount}
-       ${baseCurrency} to ${targetCurrencyAmount} ${targetCurrency}`, {
-        position: toast.POSITION.BOTTOM_RIGHT,
-      });
+      toast.success(
+        `You've successfully exchanged ${values.amount}
+       ${baseCurrency} to ${targetCurrencyAmount} ${targetCurrency}`,
+        {
+          position: toast.POSITION.BOTTOM_RIGHT,
+        },
+      );
     },
     validationSchema: validationConversionForm,
   });
-
 
   useEffect(() => {
     if (data) {
@@ -177,6 +184,6 @@ const ExchangeForm = () => {
       </form>
     </FormikProvider>
   );
-};
+}
 
 export default ExchangeForm;

@@ -8,7 +8,10 @@ function render(
   ui: React.ReactNode,
   {
     preloadedState,
-    store = configureStore({ reducer: { wallet: walletSlice.reducer }, preloadedState }),
+    store = configureStore({
+      reducer: { wallet: walletSlice.reducer },
+      preloadedState,
+    }),
     ...renderOptions
   } = {},
 ) {
@@ -16,8 +19,8 @@ function render(
     return <Provider store={store}>{children}</Provider>;
   }
   return rtlRender(
-ui as React.ReactElement<any, string | React.JSXElementConstructor<any>>,
-{ wrapper: Wrapper, ...renderOptions },
+    ui as React.ReactElement<any, string | React.JSXElementConstructor<any>>,
+    { wrapper: Wrapper, ...renderOptions },
   );
 }
 

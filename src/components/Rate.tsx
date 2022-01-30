@@ -9,7 +9,9 @@ interface IRate {
 }
 
 const Rate: React.FC<IRate> = ({
-  baseCurrency, targetCurrency, rate,
+  baseCurrency,
+  targetCurrency,
+  rate,
   isLoading = false,
 }) => {
   if (isLoading) {
@@ -19,20 +21,12 @@ const Rate: React.FC<IRate> = ({
   return (
     <div className="flex flex-row justify-between w-full p-4 font-semibold">
       <div className="flex flex-row text-xs">
-        <p>
-          {symbols[baseCurrency as keyof ISymbols]}
-        </p>
+        <p>{symbols[baseCurrency as keyof ISymbols]}</p>
         1 =
-        <p>
-          {symbols[targetCurrency as keyof ISymbols]}
-        </p>
-        <p>
-          { rate }
-        </p>
+        <p>{symbols[targetCurrency as keyof ISymbols]}</p>
+        <p>{rate}</p>
       </div>
-      <p className="text-xs">
-        Our current rate
-      </p>
+      <p className="text-xs">Our current rate</p>
     </div>
   );
 };
