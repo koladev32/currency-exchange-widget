@@ -14,11 +14,12 @@ const SelectCurrency: React.FC<ISelectCurrency> = ({
   <div className="relative w-3/6">
     <select
       className="block appearance-none bg-white ml-2 w-full hover:bg-stone-50 text-gray-700 py-3 pr-8 focus:outline-none focus:bg-white"
-      id="grid-state"
+      id="select-multiple-currencies"
+      data-testid="select-multiple-currencies"
       onChange={(event) => onChange(event.target.value)}
     >
       {currencies.map((currency) => (
-        <option value={currency}>
+        <option data-testid={`val-${currency}`} value={currency}>
           {symbolsEmojis[currency as keyof ISymbols]}
         </option>
       ))}
