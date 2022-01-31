@@ -18,7 +18,7 @@ This has been very helpful to build the multi-currency exchange widget.
 rate sources won't provide live rates).
 - [X] Contain three currency accounts with USD, EUR, GBP.
 - [X] Make it possible to make an exchange between accounts.
-- [ ] Contain two inputs on the exchange screen for both accounts. Each input should be
+- [X] Contain two inputs on the exchange screen for both accounts. Each input should be
 validated to let the user type only numbers with two digits after the dot.
 - [X] Give all the necessary information: exchange rate between active accounts and account
 balances
