@@ -14,7 +14,7 @@ function render(
       preloadedState,
     }),
     ...renderOptions
-  } = {}
+  } = {},
 ) {
   // @ts-ignore
   // eslint-disable-next-line react/prop-types
@@ -23,7 +23,7 @@ function render(
   );
   return rtlRender(
     ui as React.ReactElement<any, string | React.JSXElementConstructor<any>>,
-    { wrapper: Wrapper, ...renderOptions }
+    { wrapper: Wrapper, ...renderOptions },
   );
 }
 
