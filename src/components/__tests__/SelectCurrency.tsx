@@ -10,7 +10,7 @@ import SelectCurrency from "../SelectCurrency";
 test("renders SelectCurrency", () => {
   render(<SelectCurrency currencies={projectCurrencies} onChange={() => {}} />);
   const optionEURElement = screen.getByText(
-    symbolsEmojis[projectCurrencies[0] as keyof ISymbols],
+    symbolsEmojis[projectCurrencies[0] as keyof ISymbols]
   );
   expect(optionEURElement).toBeInTheDocument();
 });

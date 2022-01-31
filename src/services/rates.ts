@@ -6,7 +6,8 @@ export const ratesApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: ApiURL }),
   endpoints: (builder) => ({
     getRatesBetweenCurrencies: builder.query({
-      query: (arg: { baseCurrency: string; targetCurrency: string }) => `latest?base=${arg.baseCurrency}&symbols=${arg.targetCurrency}`,
+      query: (arg: { baseCurrency: string; targetCurrency: string }) =>
+        `latest?base=${arg.baseCurrency}&symbols=${arg.targetCurrency}`,
     }),
   }),
 });

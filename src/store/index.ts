@@ -7,8 +7,7 @@ export const store = configureStore({
     wallet: walletSlice.reducer,
     [ratesApi.reducerPath]: ratesApi.reducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(ratesApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(ratesApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

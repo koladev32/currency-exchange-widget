@@ -14,14 +14,16 @@ function render(
       preloadedState,
     }),
     ...renderOptions
-  } = {},
+  } = {}
 ) {
   // @ts-ignore
   // eslint-disable-next-line react/prop-types
-  const Wrapper = ({ children }) => <Provider store={store}>{children}</Provider>;
+  const Wrapper = ({ children }) => (
+    <Provider store={store}>{children}</Provider>
+  );
   return rtlRender(
     ui as React.ReactElement<any, string | React.JSXElementConstructor<any>>,
-    { wrapper: Wrapper, ...renderOptions },
+    { wrapper: Wrapper, ...renderOptions }
   );
 }
 

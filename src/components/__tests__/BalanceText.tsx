@@ -9,7 +9,7 @@ const fixtures = {
 
 test("renders BalanceText", () => {
   render(
-    <BalanceText currency={fixtures.currency} balance={fixtures.balance} />,
+    <BalanceText currency={fixtures.currency} balance={fixtures.balance} />
   );
   const balanceElement = screen.getByText(/Balance/i);
   expect(balanceElement).toBeInTheDocument();

@@ -122,7 +122,9 @@ const ExchangeForm = () => {
               value={formik.values.amount || ""}
               onChange={(e) => {
                 formik.handleChange(e);
-                setTargetCurrencyAmount(parseFloat((parseFloat(e.target.value) * rate).toFixed(2)));
+                setTargetCurrencyAmount(
+                  parseFloat((parseFloat(e.target.value) * rate).toFixed(2)),
+                );
               }}
               onBlur={formik.handleBlur}
               onKeyPress={(e) => {
@@ -132,7 +134,9 @@ const ExchangeForm = () => {
               }}
             />
             {formik.errors.amount ? (
-              <p className="text-red-500 text-xs text-left">{formik.errors.amount}</p>
+              <p className="text-red-500 text-xs text-left">
+                {formik.errors.amount}
+              </p>
             ) : null}
           </div>
         </div>
@@ -160,7 +164,9 @@ const ExchangeForm = () => {
               defaultValue={1}
             />
             {targetCurrency === baseCurrency ? (
-              <p className="text-red-500 text-xs text-left">You can&apos;t convert the same currency.</p>
+              <p className="text-red-500 text-xs text-left">
+                You can&apos;t convert the same currency.
+              </p>
             ) : null}
           </div>
         </div>
@@ -175,7 +181,14 @@ const ExchangeForm = () => {
         <div className="flex flex-row py-2 mt-6 rounded justify-center">
           <button
             type="submit"
-            className={`${!formik.isValid || formik.isSubmitting || isLoading || targetCurrency === baseCurrency ? "bg-gray-400" : "bg-blue-600"} rounded-lg py-3 text-white px-16 
+            className={`${
+              !formik.isValid
+              || formik.isSubmitting
+              || isLoading
+              || targetCurrency === baseCurrency
+                ? "bg-gray-400"
+                : "bg-blue-600"
+            } rounded-lg py-3 text-white px-16 
             font-semibold shadow-md shadow-blue-500/50 md:px-40 lg:px-36`}
             disabled={targetCurrency === baseCurrency}
           >
