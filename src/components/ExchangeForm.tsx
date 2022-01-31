@@ -29,7 +29,9 @@ const ExchangeForm = () => {
   const currencies = [...projectCurrencies];
 
   const [targetCurrency, setTargetCurrency] = useState("USD");
-  const ratesQuery = useSWR(`${ApiURL}latest?base=${baseCurrency}&symbols=${targetCurrency}`, fetcher);
+  const ratesQuery = useSWR(`${ApiURL}latest?base=${baseCurrency}&symbols=${targetCurrency}`, fetcher, {
+    refreshInterval: 10000,
+  });
 
   const validationConversionForm = Yup.object({
     amount: Yup.number()
