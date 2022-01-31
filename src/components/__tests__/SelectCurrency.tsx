@@ -1,6 +1,6 @@
 import React from "react";
 import userEvent from "@testing-library/user-event";
-import { render, screen } from "../../utils/test-utils";
+import { render, screen, act } from "../../utils/test-utils";
 import {
   ISymbols,
   projectCurrencies,
@@ -14,7 +14,7 @@ test("renders SelectCurrency", () => {
     symbolsEmojis[projectCurrencies[0] as keyof ISymbols],
   );
   expect(optionEURElement).toBeInTheDocument();
-  userEvent.selectOptions(screen.getByTestId("select-multiple"), ["EUR"]);
+  act(() => userEvent.selectOptions(screen.getByTestId("select-multiple-currencies"), ["EUR"]));
 
   projectCurrencies.forEach((value) => {
     if (value === "EUR") {
