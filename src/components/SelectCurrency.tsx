@@ -3,7 +3,7 @@ import { ISymbols, symbolsEmojis } from "../utils/constants";
 
 interface ISelectCurrency {
   currencies: string[];
-  onChange: (value: string) => void;
+  onChange: (event) => void;
 }
 
 const SelectCurrency: React.FC<ISelectCurrency> = ({
