@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormikProvider, useFormik } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
@@ -14,7 +14,11 @@ import Rate from "./Rate";
 import { RootState, store } from "../store";
 import { walletSlice } from "../store/slices/wallet";
 import { TransactionType } from "../enums/transactions";
-import { useGetRatesBetweenCurrenciesQuery } from "../services/rates";
+import useSWR from "swr";
+import { ApiURL } from "../utils/api";
+
+// @ts-ignore
+const fetcher = (...args: any[]) => fetch(...args).then((res) => res.json())
 
 const ExchangeForm = () => {
   const wallet = useSelector((state: RootState) => state.wallet);
@@ -25,13 +29,7 @@ const ExchangeForm = () => {
   const currencies = [...projectCurrencies];
 
   const [targetCurrency, setTargetCurrency] = useState("USD");
-
-  const { data, isLoading } = useGetRatesBetweenCurrenciesQuery(
-    { baseCurrency, targetCurrency },
-    {
-      pollingInterval: 10000,
-    },
-  );
+  const ratesQuery = useSWR(`${ApiURL}latest?base=${baseCurrency}&symbols=${targetCurrency}`, fetcher);
 
   const validationConversionForm = Yup.object({
     amount: Yup.number()
@@ -56,15 +54,11 @@ const ExchangeForm = () => {
       ),
   });
 
-  useMemo(() => {
-    setTargetCurrency(targetCurrency);
-  }, [targetCurrency]);
-
   useEffect(() => {
-    if (data) {
-      setRate(data.rates[targetCurrency].toFixed(2));
+    if (ratesQuery.data) {
+      setRate(ratesQuery.data.rates[targetCurrency].toFixed(2));
     }
-  }, [data, targetCurrency]);
+  }, [ratesQuery.data, targetCurrency]);
 
   const formik = useFormik({
     initialValues: {
@@ -204,7 +198,7 @@ const ExchangeForm = () => {
             baseCurrency={baseCurrency}
             targetCurrency={targetCurrency}
             rate={rate}
-            isLoading={isLoading}
+            isLoading={!ratesQuery.data}
           />
         </div>
         <div className="flex flex-row py-2 mt-6 rounded justify-center">
@@ -213,7 +207,7 @@ const ExchangeForm = () => {
             className={`${
               !formik.isValid
               || formik.isSubmitting
-              || isLoading
+              || !ratesQuery.data
               || targetCurrency === baseCurrency
                 ? "bg-gray-400"
                 : "bg-blue-600"
