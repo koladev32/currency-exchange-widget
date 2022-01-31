@@ -3,7 +3,8 @@ import { ISymbols, symbolsEmojis } from "../utils/constants";
 
 interface ISelectCurrency {
   currencies: string[];
-  onChange: (event) => void;
+  // eslint-disable-next-line no-unused-vars
+  onChange(event: string): void;
 }
 
 const SelectCurrency: React.FC<ISelectCurrency> = ({

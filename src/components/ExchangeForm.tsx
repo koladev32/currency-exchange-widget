@@ -16,7 +16,7 @@ import { walletSlice } from "../store/slices/wallet";
 import { TransactionType } from "../enums/transactions";
 import { useGetRatesBetweenCurrenciesQuery } from "../services/rates";
 
-function ExchangeForm() {
+const ExchangeForm = () => {
   const wallet = useSelector((state: RootState) => state.wallet);
 
   const [rate, setRate] = useState(0);
@@ -42,6 +42,7 @@ function ExchangeForm() {
       .test(
         "maxDigitsAfterDecimal",
         "Amount field must have 2 digits after decimal or less",
+        // @ts-ignore
         (number) => /^\d+(\.\d{1,2})?$/.test(number),
       ),
   });
@@ -121,7 +122,7 @@ function ExchangeForm() {
               value={formik.values.amount || ""}
               onChange={(e) => {
                 formik.handleChange(e);
-                setTargetCurrencyAmount(parseFloat((e.target.value * rate).toFixed(2)));
+                setTargetCurrencyAmount(parseFloat((parseFloat(e.target.value) * rate).toFixed(2)));
               }}
               onBlur={formik.handleBlur}
               onKeyPress={(e) => {
@@ -159,7 +160,7 @@ function ExchangeForm() {
               defaultValue={1}
             />
             {targetCurrency === baseCurrency ? (
-              <p className="text-red-500 text-xs text-left">You can't convert the same currency.</p>
+              <p className="text-red-500 text-xs text-left">You can&apos;t convert the same currency.</p>
             ) : null}
           </div>
         </div>
@@ -184,6 +185,6 @@ function ExchangeForm() {
       </form>
     </FormikProvider>
   );
-}
+};
 
 export default ExchangeForm;

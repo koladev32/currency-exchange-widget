@@ -7,6 +7,7 @@ import { walletSlice } from "../store/slices/wallet";
 function render(
   ui: React.ReactNode,
   {
+    // @ts-ignore
     preloadedState,
     store = configureStore({
       reducer: { wallet: walletSlice.reducer },
@@ -15,9 +16,9 @@ function render(
     ...renderOptions
   } = {},
 ) {
-  function Wrapper({ children }) {
-    return <Provider store={store}>{children}</Provider>;
-  }
+  // @ts-ignore
+  // eslint-disable-next-line react/prop-types
+  const Wrapper = ({ children }) => <Provider store={store}>{children}</Provider>;
   return rtlRender(
     ui as React.ReactElement<any, string | React.JSXElementConstructor<any>>,
     { wrapper: Wrapper, ...renderOptions },
