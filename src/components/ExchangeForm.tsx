@@ -3,6 +3,7 @@ import { FormikProvider, useFormik } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
+import useSWR from "swr";
 import SelectCurrency from "./SelectCurrency";
 import BalanceText from "./BalanceText";
 import {
@@ -14,11 +15,10 @@ import Rate from "./Rate";
 import { RootState, store } from "../store";
 import { walletSlice } from "../store/slices/wallet";
 import { TransactionType } from "../enums/transactions";
-import useSWR from "swr";
 import { ApiURL } from "../utils/api";
 
 // @ts-ignore
-const fetcher = (...args: any[]) => fetch(...args).then((res) => res.json())
+const fetcher = (...args: any[]) => fetch(...args).then((res) => res.json());
 
 const ExchangeForm = () => {
   const wallet = useSelector((state: RootState) => state.wallet);
@@ -124,13 +124,16 @@ const ExchangeForm = () => {
               focus:bg-white focus:border focus:border-blue-100"
               type="number"
               required
-              placeholder={formik.values.targetAmount.toString()}
+              placeholder={formik.values.amount.toString()}
               name="amount"
               value={formik.values.amount || ""}
               onChange={(e) => {
+                const eValue = parseFloat(e.target.value).toFixed(2);
+                formik.setFieldValue("amount", eValue);
                 formik.handleChange(e);
-                formik.values.targetAmount = (
-                  parseFloat((parseFloat(e.target.value) * rate).toFixed(2))
+                formik.setFieldValue(
+                  "targetAmount",
+                  parseFloat((parseFloat(eValue) * rate).toFixed(2)),
                 );
               }}
               onBlur={formik.handleBlur}
@@ -168,12 +171,15 @@ const ExchangeForm = () => {
               type="number"
               required
               name="targetAmount"
-              placeholder={formik.values.targetAmount.toString()}
+              placeholder={rate.toString()}
               value={formik.values.targetAmount || ""}
               onChange={(e) => {
+                const eValue = parseFloat(e.target.value).toFixed(2);
+                formik.setFieldValue("targetAmount", eValue);
                 formik.handleChange(e);
-                formik.values.amount = (
-                  parseFloat((parseFloat(e.target.value) / rate).toFixed(2))
+                formik.setFieldValue(
+                  "amount",
+                  parseFloat((parseFloat(eValue) / rate).toFixed(2)),
                 );
               }}
               onBlur={formik.handleBlur}
