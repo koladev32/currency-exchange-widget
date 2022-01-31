@@ -12,9 +12,16 @@
 This application uses the ```https://api.exchangerate.host/``` FX rates source api because the Free plan to ```https://openexchangerates.org/api/``` only allows conversion for USD to all currencies. 
 This has been very helpful to build the multi-currency exchange widget.
 
-## Features made and created
+## Features
 
-## Remaining features
+- [X] Refresh the rate every 10s (we do not expect the rate to change every 10s as most free
+rate sources won't provide live rates).
+- [X] Contain three currency accounts with USD, EUR, GBP.
+- [X] Make it possible to make an exchange between accounts.
+- [ ] Contain two inputs on the exchange screen for both accounts. Each input should be
+validated to let the user type only numbers with two digits after the dot.
+- [X] Give all the necessary information: exchange rate between active accounts and account
+balances
 
 ## Amelioration and critics
 
