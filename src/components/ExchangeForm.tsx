@@ -23,7 +23,7 @@ const fetcher = (...args: any[]) => fetch(...args).then((res) => res.json());
 const ExchangeForm = () => {
   const wallet = useSelector((state: RootState) => state.wallet);
 
-  const [rate, setRate] = useState(0);
+  const [rate, setRate] = useState(1);
   const [baseCurrency, setBaseCurrency] = useState("EUR");
 
   const currencies = [...projectCurrencies];
@@ -103,6 +103,7 @@ const ExchangeForm = () => {
       <form
         className="w-full flex flex-col h-2/3 bg-stone-50 rounded p-2 md:w-9/12 md:self-center md:p-4 lg:w-5/12 lg:h-10/12"
         onSubmit={formik.handleSubmit}
+        data-testid="exchange-form"
       >
         <div className="flex flex-row bg-white py-2 my-2 rounded">
           <div className="relative w-3/6">
@@ -124,6 +125,7 @@ const ExchangeForm = () => {
               focus:bg-white focus:border focus:border-blue-100"
               type="number"
               required
+              data-testid="amount-field"
               placeholder={formik.values.amount.toString()}
               name="amount"
               value={formik.values.amount || ""}
@@ -171,6 +173,7 @@ const ExchangeForm = () => {
               type="number"
               required
               name="targetAmount"
+              data-testid="targetAmount-field"
               placeholder={rate.toString()}
               value={formik.values.targetAmount || ""}
               onChange={(e) => {
@@ -211,6 +214,7 @@ const ExchangeForm = () => {
         </div>
         <div className="flex flex-row py-2 mt-6 rounded justify-center">
           <button
+            data-testid="exchange-form-submit"
             type="submit"
             className={`${
               !formik.isValid
