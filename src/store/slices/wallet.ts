@@ -27,7 +27,7 @@ export const walletSlice = createSlice({
     ) => {
       const updatedState = state;
       updatedState[action.payload.currency as keyof Wallet].balance
-        += action.payload.amount;
+        += Math.round(action.payload.amount);
     },
     decrementByAmount: (state: Wallet, action: PayloadAction<DebitPayload>) => {
       const updatedState = state;

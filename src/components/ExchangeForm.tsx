@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FormikProvider, useFormik } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
@@ -16,46 +16,45 @@ import { walletSlice } from "../store/slices/wallet";
 import { TransactionType } from "../enums/transactions";
 import { useGetRatesBetweenCurrenciesQuery } from "../services/rates";
 
-function ExchangeForm() {
+const ExchangeForm = () => {
   const wallet = useSelector((state: RootState) => state.wallet);
 
   const [rate, setRate] = useState(0);
   const [baseCurrency, setBaseCurrency] = useState("EUR");
-  const [targetCurrencyAmount, setTargetCurrencyAmount] = useState(rate);
+  const [targetCurrencyAmount, setTargetCurrencyAmount] = useState(0);
 
-  const baseCurrenciesList = [...projectCurrencies];
-  const [targetCurrenciesList, setTargetCurrenciesList] = useState(
-    [...baseCurrenciesList].filter((value) => value !== baseCurrency),
-  );
+  const currencies = [...projectCurrencies];
 
-  const [targetCurrency, setTargetCurrency] = useState(targetCurrenciesList[0]);
+  const [targetCurrency, setTargetCurrency] = useState("USD");
 
   const { data, isLoading } = useGetRatesBetweenCurrenciesQuery(
     { baseCurrency, targetCurrency },
     {
-      pollingInterval: 10000,
+      pollingInterval: 50000,
     },
   );
 
   const validationConversionForm = Yup.object({
-    primaryCurrency: Yup.string().trim().required(),
-    targetCurrency: Yup.string().trim().required(),
     amount: Yup.number()
       .lessThan(wallet[baseCurrency as keyof ISymbols].balance)
       .moreThan(0)
-      .required(),
+      .required()
+      .test(
+        "maxDigitsAfterDecimal",
+        "Amount field must have 2 digits after decimal or less",
+        // @ts-ignore
+        (number) => /^\d+(\.\d{1,2})?$/.test(number),
+      ),
   });
 
   const formik = useFormik({
     initialValues: {
-      baseCurrency,
-      targetCurrency,
       amount: 0,
     },
-    onSubmit: (values) => {
+    onSubmit: (values, { resetForm }) => {
       store.dispatch(
         walletSlice.actions.incrementByAmount({
-          currency: values.targetCurrency,
+          currency: targetCurrency,
           amount: targetCurrencyAmount,
           transactionType: TransactionType.credit,
         }),
@@ -63,13 +62,14 @@ function ExchangeForm() {
 
       store.dispatch(
         walletSlice.actions.decrementByAmount({
-          currency: values.baseCurrency,
+          currency: baseCurrency,
           amount: values.amount,
           transactionType: TransactionType.debit,
         }),
       );
-
-      toast.success(
+      resetForm();
+      setTargetCurrencyAmount(0);
+      toast.info(
         `You've successfully exchanged ${values.amount}
        ${baseCurrency} to ${targetCurrencyAmount} ${targetCurrency}`,
         {
@@ -80,20 +80,17 @@ function ExchangeForm() {
     validationSchema: validationConversionForm,
   });
 
+  useMemo(() => {
+    setTargetCurrency(targetCurrency);
+  }, [targetCurrency]);
+
   useEffect(() => {
     if (data) {
-      setRate(data.rates[targetCurrency]);
+      setRate(data.rates[targetCurrency].toFixed(2));
     }
-    // Refreshing the targetCurrency value because it directly points to a reference
+  }, [data]);
 
-    setTargetCurrenciesList(
-      [...baseCurrenciesList].filter((value) => value !== baseCurrency),
-    );
-    setTargetCurrency(targetCurrenciesList[0]);
-
-    formik.values.baseCurrency = baseCurrency;
-    formik.values.targetCurrency = targetCurrency;
-  }, [data, targetCurrency, baseCurrency]);
+  const buttonText = `Sell ${baseCurrency} for ${targetCurrency}`;
 
   return (
     <FormikProvider value={formik}>
@@ -107,7 +104,7 @@ function ExchangeForm() {
               For primary currency selection
               */}
             <SelectCurrency
-              currencies={baseCurrenciesList}
+              currencies={currencies}
               onChange={setBaseCurrency}
             />
             <BalanceText
@@ -117,15 +114,15 @@ function ExchangeForm() {
           </div>
           <div className="w-4/6">
             <input
-              className="appearance-none block w-full text-right text-gray-700 py-4 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="grid-city"
+              className=" block w-full text-right rounded text-gray-700 py-4 px-4 leading-tight focus:outline-none
+              focus:bg-white focus:border focus:border-blue-100"
               type="number"
               placeholder="0"
               name="amount"
-              value={formik.values.amount}
+              value={formik.values.amount || ""}
               onChange={(e) => {
                 formik.handleChange(e);
-                setTargetCurrencyAmount(e.target.value * rate);
+                setTargetCurrencyAmount(parseFloat((parseFloat(e.target.value) * rate).toFixed(2)));
               }}
               onBlur={formik.handleBlur}
               onKeyPress={(e) => {
@@ -133,11 +130,9 @@ function ExchangeForm() {
                   e.preventDefault();
                 }
               }}
-              min="0"
-              max="9999"
             />
             {formik.errors.amount ? (
-              <div className="text-red-500">{formik.errors.amount}</div>
+              <p className="text-red-500 text-xs text-left">{formik.errors.amount}</p>
             ) : null}
           </div>
         </div>
@@ -147,7 +142,7 @@ function ExchangeForm() {
               For secondary currency selection
               */}
             <SelectCurrency
-              currencies={targetCurrenciesList}
+              currencies={["USD", "EUR", "GBP"]}
               onChange={setTargetCurrency}
             />
             <BalanceText
@@ -158,11 +153,15 @@ function ExchangeForm() {
           <div className="w-4/6">
             <input
               className="appearance-none block w-full text-right text-gray-700 py-4 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="grid-city"
               type="number"
               name="targetCurrency"
-              value={targetCurrencyAmount}
+              placeholder="0"
+              value={`+${targetCurrencyAmount}`}
+              defaultValue={1}
             />
+            {targetCurrency === baseCurrency ? (
+              <p className="text-red-500 text-xs text-left">You can&apos;t convert the same currency.</p>
+            ) : null}
           </div>
         </div>
         <div className="flex flex-row bg-white py-2 mt-10 rounded">
@@ -176,14 +175,16 @@ function ExchangeForm() {
         <div className="flex flex-row py-2 mt-6 rounded justify-center">
           <button
             type="submit"
-            className="bg-blue-600 rounded-lg py-3 text-white px-16 font-semibold shadow-md shadow-blue-500/50 md:px-40 lg:px-36"
+            className={`${!formik.isValid || formik.isSubmitting || isLoading || targetCurrency === baseCurrency ? "bg-gray-400" : "bg-blue-600"} rounded-lg py-3 text-white px-16 
+            font-semibold shadow-md shadow-blue-500/50 md:px-40 lg:px-36`}
+            disabled={targetCurrency === baseCurrency}
           >
-            Exchange money
+            {buttonText}
           </button>
         </div>
       </form>
     </FormikProvider>
   );
-}
+};
 
 export default ExchangeForm;
